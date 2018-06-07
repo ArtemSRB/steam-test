@@ -9,6 +9,7 @@ import {
     Close,
     ItemScroll
 } from './Css'
+import axios from "axios/index";
 class Modal extends React.Component {
     constructor(props) {
         super(props);
@@ -16,6 +17,7 @@ class Modal extends React.Component {
             data: data.game.availableGameStats,
             dataDone: dataDone.playerstats,
         };
+
     }
     render() {
         // Render nothing if the "show" prop is false
@@ -23,8 +25,23 @@ class Modal extends React.Component {
             return null;
         }
 
-        const {name} = this.props;
+        const {name,gameid} = this.props;
         const {data, dataDone} = this.state;
+        let self = this;
+        const localValue = localStorage.getItem('id');
+        axios.post('http://localhost/steam/steamachived.php', {
+            gameid:gameid,
+            data: localValue,
+        })
+            .then(function (response) {
+                console.log(response);
+                self.setState({
+                    data:response.data.response.games
+                })
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         const DataAchiev = data.achievements;
         const DataDoneAchiev = dataDone.achievements;
         return (

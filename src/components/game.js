@@ -8,11 +8,13 @@ import {
     Page,
     Achiev
 } from './Css'
+import axios from "axios/index";
 class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: data.response.games,
+            data: [],
+            gameid: [],
             currentPage: 1,
             activeModal: null,
             dataPerPage: 2
@@ -21,21 +23,41 @@ class Game extends Component {
         this.handleClick = this.handleClick.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
         this.hideModal = this.hideModal.bind(this);
+        let self = this;
+        const localValue = localStorage.getItem('id');
+        console.log(localValue)
+        axios.post('http://localhost/steam/steamgameapi.php', {
+            data: localValue,
+        })
+            .then(function (response) {
+                console.log(response);
+                self.setState({
+                    data:response.data.response.games
+                })
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
+
     handleClick = (event) => {
         this.setState({
             currentPage: Number(event.target.id)
         });
     };
     clickHandler = (e, i) => {
-        this.setState({ activeModal: i })
+        this.setState({ activeModal: i });
+
     };
 
     hideModal = () => {
-        this.setState({ activeModal: null })
+        this.setState({ activeModal: null });
+
     };
+
     sort = (type) =>  {
         const { data } = this.state;
+        console.log(data)
         const isSorted = this.sorted[type];
         let direction = isSorted ? 1 : -1;
         const sorted = data.slice().sort((a, b) => {
@@ -91,6 +113,7 @@ class Game extends Component {
     render()
     {
         const {data, currentPage, dataPerPage} = this.state;
+
         const indexOfLastTodo = currentPage * dataPerPage;
         const indexOfFirstTodo = indexOfLastTodo - dataPerPage;
         const currentTodos = data.slice(indexOfFirstTodo, indexOfLastTodo);
@@ -113,6 +136,7 @@ class Game extends Component {
                         <Modal
                             id={i}
                             name={object.name}
+                            gameid={object.appid}
                             show={this.state.activeModal === i}
                             onHide={this.hideModal} >
                         </Modal>

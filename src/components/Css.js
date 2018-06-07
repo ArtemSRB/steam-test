@@ -4,6 +4,7 @@ export const Body = styled.div`
     background-color: #222;
       text-align: center;
   max-width: 600px;
+      padding-bottom: 40px;
   position:relative;
 `;
 export const Logo = styled.img`
