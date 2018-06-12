@@ -190,6 +190,9 @@ flex: 0 0 auto;
     border: 1px solid;
     margin: 20px 10px;
     text-align:center;
+    img{
+        max-width: 50px;
+        }
 `;
 export const Close = styled.div`
     line-height: 1;

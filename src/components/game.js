@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import data from './GAME.json';
 import noImg from './img/no-img.gif'
 import Modal from './modal';
 import {
@@ -14,6 +13,7 @@ class Game extends Component {
         super(props);
         this.state = {
             data: [],
+            isLoading: true,
             gameid: [],
             currentPage: 1,
             activeModal: null,
@@ -25,7 +25,7 @@ class Game extends Component {
         this.hideModal = this.hideModal.bind(this);
         let self = this;
         const localValue = localStorage.getItem('id');
-        console.log(localValue)
+        console.log(localValue);
         axios.post('http://localhost/steam/steamgameapi.php', {
             data: localValue,
         })
@@ -34,6 +34,9 @@ class Game extends Component {
                 self.setState({
                     data:response.data.response.games
                 })
+            })
+            .then(function () {
+                self.setState({ isLoading: false })
             })
             .catch(function (error) {
                 console.log(error);
@@ -112,8 +115,17 @@ class Game extends Component {
     };
     render()
     {
-        const {data, currentPage, dataPerPage} = this.state;
+        const {data, currentPage, dataPerPage,isLoading} = this.state;
+        if (isLoading) {
+            return(
+                <Games>
 
+                    <div>
+                        <p>Loading...</p>
+                    </div>
+                </Games>
+            )
+        }
         const indexOfLastTodo = currentPage * dataPerPage;
         const indexOfFirstTodo = indexOfLastTodo - dataPerPage;
         const currentTodos = data.slice(indexOfFirstTodo, indexOfLastTodo);

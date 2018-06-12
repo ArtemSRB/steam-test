@@ -7,42 +7,13 @@ $rest_json = file_get_contents("php://input");
 $_POST = json_decode($rest_json, true);
 $api_key = "7A5F85FA779E5B3887295BDD14C3C2BC";
 $steamid = trim(json_encode($_POST["data"]), '"');
+
 $gameid = json_encode($_POST["gameid"]);
-$api_url = "http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=$gameid&key=$api_key&steamid=$steamid";
-
-$json = json_decode(file_get_contents($api_url), true);
+$api_url = "http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002/?key=$api_key&appid=$gameid&l=english&format=json";
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $api_url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+$output = curl_exec($ch);
+curl_close($ch);
+$json = json_decode($output, true);
 echo json_encode($json);
-
-function personaState($state)
-{
-    if ($state == 1)
-    {
-        return "Online";
-    }
-    elseif ($state == 2)
-    {
-        return "Busy";
-    }
-    elseif ($state == 3)
-    {
-        return "Away";
-    }
-    elseif ($state == 4)
-    {
-        return "Snooze";
-    }
-    elseif ($state == 5)
-    {
-        return "Looking to trade";
-    }
-    elseif ($state == 6)
-    {
-        return "Looking to play";
-    }
-    else
-    {
-        return "Offline";
-    }
-}
-
-?>

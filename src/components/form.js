@@ -14,17 +14,15 @@ class Form extends Component {
         super(props);
         this.state = {
             error: null,
-            isLoaded: false,
             submitted: false,
+            isLoaded: true,
             players:[],
             value:''
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-
         const localValue = localStorage.getItem('id');
-        console.log(localValue);
         let self = this;
         if(localValue){
             axios.post('http://localhost/steam/steamapi.php', {
@@ -34,7 +32,7 @@ class Form extends Component {
                     console.log(response.data.response.players[0]);
                     self.setState({
                         players:response.data.response.players[0],
-                        submitted:true
+                        submitted:true,
                     })
                 })
                 .catch(function (error) {
@@ -53,8 +51,6 @@ class Form extends Component {
         event.preventDefault();
         let id = this.state.value;
         localStorage.setItem('id', this.state.value);
-        const localValue = localStorage.getItem('id')
-        console.log(localValue)
         let self = this;
         axios.post('http://localhost/steam/steamapi.php', {
                 data: id,
@@ -63,7 +59,7 @@ class Form extends Component {
                 console.log(response.data.response.players[0]);
                 self.setState({
                 players:response.data.response.players[0],
-                submitted:true
+                submitted:true,
                 })
             })
             .catch(function (error) {
@@ -73,24 +69,24 @@ class Form extends Component {
     render()
     {
 
-        const { value, isLoaded, error, players} = this.state;
+        const { value, error, players} = this.state;
         let WrappedHome;
-        if (this.state.submitted === true) {
-            WrappedHome = function(props) {
-                return (<Content {...props}
-                                 value={value}
-                                 isLoaded={isLoaded}
-                                 players={players}
-                                 error={error}  />);
-            };
-        }
+            if (this.state.submitted === true) {
+                    WrappedHome = function(props) {
+                        return (<Content {...props}
+                                         value={value}
+                                         players={players}
+                                         error={error}  />);
+                    };
+            }
+
         return (
             <div>
-            <form action="" className="form_search" onSubmit={this.handleSubmit} >
-                <Input type="text" placeholder="steam id" minLength="15" value={this.state.value}  onChange={this.handleChange}/>
-                <Button type="submit" >get data</Button>
+                <form action="" className="form_search" onSubmit={this.handleSubmit} >
+                    <Input type="text" placeholder="steam id" minLength="15" value={this.state.value}  onChange={this.handleChange}/>
+                    <Button type="submit" >get data</Button>
 
-            </form>
+                </form>
                 <BrowserRouter>
                     <div>
                     <Route exact path="/" component={WrappedHome}/>

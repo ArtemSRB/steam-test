@@ -9,40 +9,10 @@ $_POST = json_decode($rest_json, true);
 $api_key = "7A5F85FA779E5B3887295BDD14C3C2BC";
 $steamid = json_encode($_POST["data"]);
 $api_url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=$api_key&steamids=$steamid";
-
-$json = json_decode(file_get_contents($api_url), true);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $api_url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+$output = curl_exec($ch);
+curl_close($ch);
+$json = json_decode($output, true);
 echo json_encode($json);
-
-function personaState($state)
-{
-    if ($state == 1)
-    {
-        return "Online";
-    }
-    elseif ($state == 2)
-    {
-        return "Busy";
-    }
-    elseif ($state == 3)
-    {
-        return "Away";
-    }
-    elseif ($state == 4)
-    {
-        return "Snooze";
-    }
-    elseif ($state == 5)
-    {
-        return "Looking to trade";
-    }
-    elseif ($state == 6)
-    {
-        return "Looking to play";
-    }
-    else
-    {
-        return "Offline";
-    }
-}
-
-?>

@@ -7,9 +7,11 @@ $rest_json = file_get_contents("php://input");
 $_POST = json_decode($rest_json, true);
 $api_key = "7A5F85FA779E5B3887295BDD14C3C2BC";
 $steamid = trim(json_encode($_POST["data"]), '"');
-$api_url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=$api_key&include_played_free_games=1&include_appinfo=1&steamid=$steamid&format=json";
+
+$gameid = json_encode($_POST["gameid"]);
+$url = "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=$gameid&key=$api_key&steamid=$steamid";
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $api_url);
+curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 $output = curl_exec($ch);
 curl_close($ch);
