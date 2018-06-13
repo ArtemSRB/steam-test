@@ -17,7 +17,7 @@ class Game extends Component {
             gameid: [],
             currentPage: 1,
             activeModal: null,
-            dataPerPage: 2
+            dataPerPage: 6
         };
         this.sorted = { playtime_forever: true, name: true };
         this.handleClick = this.handleClick.bind(this);
@@ -26,19 +26,19 @@ class Game extends Component {
         let self = this;
         const localValue = localStorage.getItem('id');
         console.log(localValue);
-        axios.post('http://localhost/steam/steamgameapi.php', {
+        axios.post('http://test-steam.tmweb.ru/steamgameapi.php', {
             data: localValue,
         })
-            .then(function (response) {
+            .then(response => {
                 console.log(response);
                 self.setState({
                     data:response.data.response.games
                 })
             })
-            .then(function () {
+            .then( () => {
                 self.setState({ isLoading: false })
             })
-            .catch(function (error) {
+            .catch(error => {
                 console.log(error);
             });
     }

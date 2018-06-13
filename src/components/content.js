@@ -11,12 +11,20 @@ class Content extends Component {
     render(){
 
         const {error, players} = this.props;
-        let raw_time = parseInt( players.timecreated ) * 1000 ;
-        let the_date = new Date( raw_time );
-        let formatted_date = the_date.toDateString();
+        console.log(error)
         if (error) {
-            return <div>Error: {error.message}</div>;
+            return <div>Error: {error}</div>;
+        }
+        if (players === undefined) {
+            return(
+                <Profile>
+                    <div>Error!</div>
+                </Profile>
+            );
         } else {
+            let raw_time = parseInt( players.timecreated ) * 1000 ;
+            let the_date = new Date( raw_time );
+            let formatted_date = the_date.toDateString();
             return (
                  <Profile>
                     <Avatar><img src={players.avatarfull} alt="avatar" />

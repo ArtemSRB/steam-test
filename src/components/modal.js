@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import dataDone from './AchiveDone.json';
 import {
     ModalBackDrop,
     ModalContent,
@@ -26,52 +25,68 @@ class Modal extends React.Component {
         const {gameid} = this.props;
         let self = this;
         const localValue = localStorage.getItem('id');
-        axios.post('http://localhost/steam/steamachived.php', {
+        axios.post('http://test-steam.tmweb.ru/steamachived.php', {
             gameid:gameid,
             data: localValue,
         })
-            .then(function (response) {
-                let check = response.data.game.availableGameStats.achievements;
-                if(check === undefined){
-                    console.log('oh');
+            .then(response => {
                     self.setState({
-                        empty:true
-                    })
-                }
-                else{
-                    self.setState({
-                        data:response.data.game
+                        data:response.data.game.availableGameStats.achievements
                     });
 
-                    return (axios.post('http://localhost/steam/steamachiveddone.php', {
+                    return (axios.post('http://test-steam.tmweb.ru/steamachiveddone.php', {
                         gameid:gameid,
                         data: localValue,
-                    }).then(function (response) {
+                    })    .then(response => {
                         console.log(response.data);
                         self.setState({
-                            dataDone:response.data.playerstats
+                            dataDone:response.data.playerstats.achievements
                         })
                     })
-                        .catch(function (error) {
+                        .catch(error => {
                             console.log(error);
+
+                            self.setState({
+                                isLoading: false,
+                                empty:true
+                            })
                         }))
 
-                }
-
             })
-            .then(function () {
+            .then( () => {
                 self.setState({ isLoading: false })
-            })     .catch(function (error) {
+            })
+            .catch(error => {
             console.log(error);
+
+            self.setState({
+                isLoading: false,
+                empty:true,
+            })
+
         });
 
 
     }
     render() {
         const {name} = this.props;
-
         const {data, dataDone,isLoading,empty} = this.state;
-        // Render nothing if the "show" prop is false
+        if(data === undefined){
+            return(
+                <ModalBackDrop className="backdrop" >
+                    <ModalContent className="modal">
+                        <Close onClick={this.props.onHide}>
+                            &times;
+                        </Close>
+                        <h2>{name}</h2>
+                        <Scroll>
+                            <h1>This game does not have achievements</h1>
+                        </Scroll>
+
+                    </ModalContent>
+                </ModalBackDrop>
+            )
+        }
         if(!this.props.onHide) {
             return null;
         }
@@ -92,43 +107,25 @@ class Modal extends React.Component {
             )
         }
 
+        if(empty === true){
+            return(
+                <ModalBackDrop className="backdrop" >
+                    <ModalContent className="modal">
+                        <Close onClick={this.props.onHide}>
+                            &times;
+                        </Close>
+                        <h2>{name}</h2>
+                        <Scroll>
+                            <h1>This game does not have achievements</h1>
+                        </Scroll>
+
+                    </ModalContent>
+                </ModalBackDrop>
+            )
+        }
         if(empty === false){
-            return(
-                <ModalBackDrop className="backdrop" >
-                    <ModalContent className="modal">
-                        <Close onClick={this.props.onHide}>
-                            &times;
-                        </Close>
-                        <h2>{name}</h2>
-                        <Scroll>
-                            <h1>sorry this game not achived</h1>
-                        </Scroll>
-
-                    </ModalContent>
-                </ModalBackDrop>
-            )
-        }
-        if(empty){
-            return(
-                <ModalBackDrop className="backdrop" >
-                    <ModalContent className="modal">
-                        <Close onClick={this.props.onHide}>
-                            &times;
-                        </Close>
-                        <h2>{name}</h2>
-                        <Scroll>
-                            <h1>true</h1>
-                        </Scroll>
-
-                    </ModalContent>
-                </ModalBackDrop>
-            )
-        }
-        else if(data.length !== 0) {
-            const DataAchive = data.availableGameStats.achievements;
-
-            const DataDoneAchiev = dataDone.achievements;
-            console.log(DataDoneAchiev)
+            const DataAchive = data;
+            const DataDoneAchiev = dataDone;
             return (
                 <ModalBackDrop className="backdrop" >
                     <ModalContent className="modal">

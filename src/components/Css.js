@@ -44,6 +44,11 @@ export const Button = styled.button`
        background-color: #fff;
            color: #222;
   }
+  &:disabled,
+&[disabled]{
+  background-color: #cccccc;
+  color: #666666;
+}
 `;
 export const Profile = styled.div`
     padding: 20px 50px;
@@ -174,10 +179,10 @@ export const ModalBackDrop = styled.div`
 export const ModalContent = styled.div`
      background-color:  rgba(0, 0, 0, 0.9);
      border:1px solid #fff;
-    max-width: 500px;
+   width: 500px;
     min-height: 300px;
     margin: 0px auto;
-    position:relative;
+    position:fixed;
     padding: 30px;
 `;
 export const Scroll = styled.div`

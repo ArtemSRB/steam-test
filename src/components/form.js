@@ -25,19 +25,24 @@ class Form extends Component {
         const localValue = localStorage.getItem('id');
         let self = this;
         if(localValue){
-            axios.post('http://localhost/steam/steamapi.php', {
+            axios.post('http://test-steam.tmweb.ru/steamapi.php', {
                 data: localValue,
             })
-                .then(function (response) {
-                    console.log(response.data.response.players[0]);
+                .then(response => {
+                    console.log(response);
                     self.setState({
                         players:response.data.response.players[0],
                         submitted:true,
                     })
                 })
-                .catch(function (error) {
+                .catch(error => {
                     console.log(error);
+                    self.setState({
+                        error:true,
+                        submitted:true,
+                    })
                 });
+
         }
 
 
@@ -52,25 +57,32 @@ class Form extends Component {
         let id = this.state.value;
         localStorage.setItem('id', this.state.value);
         let self = this;
-        axios.post('http://localhost/steam/steamapi.php', {
+        axios.post('http://test-steam.tmweb.ru/steamapi.php', {
                 data: id,
         })
-            .then(function (response) {
+            .then(response => {
                 console.log(response.data.response.players[0]);
                 self.setState({
                 players:response.data.response.players[0],
                 submitted:true,
                 })
             })
-            .catch(function (error) {
+            .catch(error => {
                 console.log(error);
+                self.setState({
+                    error:true,
+                    submitted:true,
+                })
             });
     };
     render()
     {
 
         const { value, error, players} = this.state;
+        const enabled =
+            value.length > 15;
         let WrappedHome;
+
             if (this.state.submitted === true) {
                     WrappedHome = function(props) {
                         return (<Content {...props}
@@ -83,8 +95,8 @@ class Form extends Component {
         return (
             <div>
                 <form action="" className="form_search" onSubmit={this.handleSubmit} >
-                    <Input type="text" placeholder="steam id" minLength="15" value={this.state.value}  onChange={this.handleChange}/>
-                    <Button type="submit" >get data</Button>
+                    <Input type="text" placeholder="steam id"  value={this.state.value}  onChange={this.handleChange}/>
+                    <Button type="submit" disabled={!enabled}>get data</Button>
 
                 </form>
                 <BrowserRouter>
